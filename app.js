@@ -9,10 +9,20 @@ const xss = require('xss-clean');
 const mongoSanitize = require('express-mongo-sanitize');
 const hpp = require('hpp');
 const path = require('path');
+const cookieParser = require('cookie-parser');
 app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'views'));
 app.use(helmet());
-
+// app.use(
+//   helmet.contentSecurityPolicy({
+//       directives: {
+//           defaultSrc: ["'self'"], // Allow content from the same origin
+//           scriptSrc: ["'self'", "https://cdn.jsdelivr.net"], // Allow scripts from self and CDN
+//           styleSrc: ["'self'", "https://fonts.googleapis.com"], // Allow styles from self and Google Fonts
+//           imgSrc: ["'self'", "data:"] // Allow images from self and data URIs
+//       },
+//   })
+// );
 if(process.env.NODE_ENV === 'development'){
   app.use(morgan('dev'));
 }
@@ -32,6 +42,8 @@ const viewRouter = require('./routes/viewRoutes');
 app.use(express.static(`${__dirname}/public`));
 app.use(express.json());
 
+app.use(cookieParser());
+
 // Data sanitization against NoSQL query injection
 app.use(mongoSanitize());
 // Data sanitization against XSS
@@ -47,6 +59,7 @@ app.use((req,res,next)=>{
 
 app.use((req,res,next)=>{
   req.requestTime = new Date().toISOString();
+  console.log(req.cookies);
   next();
 })
 

@@ -1,11 +1,17 @@
-const sendErrorDev = (err, res) => {
-  errorCode = err.status || 500;
-  errorStatus = err.status || "error";
-  res.status(errorCode).json({
-    status: errorStatus,
-    message: err.message,
-    stack: err.stack,
-  });
+const sendErrorDev = (err,req,res) => {
+  if(req.originalUrl.startsWith('/api')){
+    res.status(err.statusCode).json({
+      status: err.status,
+      error: err,
+      message: err.message,
+      stack: err.stack,
+    });
+  } else {
+    res.status(err.statusCode).render('error', {
+      title: 'Something went wrong',
+      msg: err.message
+    })
+  }
 };
 const sendErrorProd = (err, res) => {
   if(err.isOperational){
@@ -24,7 +30,7 @@ const sendErrorProd = (err, res) => {
 }
 module.exports = (err, req, res, next) => {
   if (process.env.NODE_ENV === "development") {
-    sendErrorDev(err, res);
+    sendErrorDev(err,req, res);
   } else if (process.env.NODE_ENV === "production") {
     sendErrorProd(err, res);
   }

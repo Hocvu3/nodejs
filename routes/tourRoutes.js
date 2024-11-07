@@ -24,7 +24,13 @@ tourRouter
 tourRouter
   .route("/:id")
   .get(authController.protect,tourController.getTour)
-  .patch(authController.protect,authController.restrictedTo('admin','lead-guide','guide'),authController.protect,tourController.updateTour)
+  .patch(
+    authController.protect,
+    authController.restrictedTo('admin','lead-guide','guide'),
+    authController.protect,
+    tourController.uploadTourImages,
+    tourController.resizeTourImages,
+    tourController.updateTour)
   .delete(
     authController.protect,
     authController.restrictedTo('admin','lead-guide','guide'),
