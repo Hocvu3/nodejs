@@ -2,9 +2,11 @@ console.log("hello from parcel")
 import '@babel/polyfill';
 import { login,logout } from './login';
 import {updateSettings} from './updateSetting';
+import {bookTour} from './stripe';
 const logoutBtn = document.querySelector('.nav__el--logout');
 const userDataForm = document.querySelector('.form-user-data');
 const userPasswordForm = document.querySelector('.form-user-password');
+const bookBtn = document.getElementById('book-tour');
 if (logoutBtn) {
     console.log('hi');
     logoutBtn.addEventListener('click', logout);
@@ -39,5 +41,13 @@ if (userPasswordForm) {
         const password = document.getElementById('password').value;
         const passwordConfirm = document.getElementById('password-confirm').value;
         updateSettings({passwordCurrent, password, passwordConfirm}, 'password');
+    });
+}
+if (bookBtn) {
+    bookBtn.addEventListener('click', e => {
+        e.target.textContent = 'Processing...';
+        const {tourId} = e.target.dataset;
+        bookTour(tourId);
+        alert('Booked successfully');
     });
 }

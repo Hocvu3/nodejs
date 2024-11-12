@@ -13,16 +13,18 @@ const cookieParser = require('cookie-parser');
 app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'views'));
 app.use(helmet());
-// app.use(
-//   helmet.contentSecurityPolicy({
-//       directives: {
-//           defaultSrc: ["'self'"], // Allow content from the same origin
-//           scriptSrc: ["'self'", "https://cdn.jsdelivr.net"], // Allow scripts from self and CDN
-//           styleSrc: ["'self'", "https://fonts.googleapis.com"], // Allow styles from self and Google Fonts
-//           imgSrc: ["'self'", "data:"] // Allow images from self and data URIs
-//       },
-//   })
-// );
+app.use(
+  helmet.contentSecurityPolicy({
+      directives: {
+          defaultSrc: ["'self'"], // Allow content from the same origin
+          scriptSrc: ["'self'", "https://cdn.jsdelivr.net", "https://js.stripe.com"], // Allow scripts from self and CDN
+          frameSrc: ["https://js.stripe.com"],  // Allows Stripe's iframe
+          styleSrc: ["'self'", "https://fonts.googleapis.com"],// Allow styles from self and Google Fonts
+          connectSrc: ["'self'", "ws://127.0.0.1:64419"],  // Allows WebSocket connection 
+          imgSrc: ["'self'", "data:"] // Allow images from self and data URIs
+      },
+  })
+);
 if(process.env.NODE_ENV === 'development'){
   app.use(morgan('dev'));
 }
@@ -39,6 +41,7 @@ const tourRouter = require('./routes/tourRoutes');
 const userRouter = require('./routes/userRoutes');
 const reviewRouter = require('./routes/reviewRoutes');
 const viewRouter = require('./routes/viewRoutes');
+const bookingRouter = require('./routes/bookingRoutes');
 app.use(express.static(`${__dirname}/public`));
 app.use(express.json());
 
@@ -73,6 +76,7 @@ app.use('/',viewRouter);
 app.use('/api/v1/tours',tourRouter);
 app.use('/api/v1/users',userRouter);
 app.use('/api/v1/reviews',reviewRouter);
+app.use('/api/v1/bookings',bookingRouter);
 
 app.all('*',(req,res,next)=>{
   next(new AppError(`Can't find ${req.originalUrl} on this server!`,404))

@@ -1,6 +1,6 @@
 extends base
 block append head
-    //- script(src='/js/mapbox.js')
+    script(src='https://js.stripe.com/v3/')
 mixin overviewBox(label,text,icon)
      .overview-box__detail
         svg.overview-box__icon
@@ -82,6 +82,6 @@ block content
                 p.cta__text 10 days. 1 adventure. Infinite memories. Make it yours today!
 
                 if user
-                    button.btn.btn--green.span-all-rows Book tour now!
+                    button.btn.btn--green.span-all-rows#book-tour(data-tour-id=`${tour.id}`) Book tour!
                 else
                     a.btn.btn--green.span-all-rows(href="/login") Login to book tour
